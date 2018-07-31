@@ -258,7 +258,7 @@ func (client *Client) SetName(name string, hash uint32) error {
 func (client *Client) Serve() {
 	defer client.Disconnect()
 	buf := make([]byte, 2048)
-	client.ServerMessage("Welcome to breathe.network board! Try using `/help` to see what you can do. If you're on windows, try `/os win` first")
+	client.ServerMessage("Welcome to breathe.network board! Try using `/help` to see what you can do. If you're on windows, try `/endline win` first")
 
 	name := client.Name
 	if client.Hash > 0 {
