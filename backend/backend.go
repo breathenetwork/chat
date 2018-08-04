@@ -360,6 +360,11 @@ func (server *Server) RenderMessage(client *Client, message *Message) []byte {
 	buf.WriteString(message.Body)
 	str := strings.Replace(buf.String()+"\n", "\n", client.Settings.Endlines, -1)
 	raw := []byte(str)
+
+	if client.Settings.Encoding == nil {
+		return raw
+	}
+
 	if dat, err := client.Settings.Encoding.NewEncoder().Bytes(raw); err == nil {
 		return dat
 	} else {
