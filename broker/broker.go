@@ -2,7 +2,6 @@ package broker
 
 import (
 	"context"
-	"fmt"
 	"github.com/breathenetwork/chat/api"
 	"github.com/breathenetwork/chat/logger"
 	"golang.org/x/crypto/ssh"
@@ -524,7 +523,6 @@ func (server *Server) ProcessControlEvent(raw ServerEvent) {
 		}
 	case *ServerEventData:
 		client, ok := server.Clients[event.Id]
-		fmt.Println(ok, client)
 		if server.Breathe == nil || (ok && !client.Authed) {
 			server.Queue = append(server.Queue, event)
 		} else {
@@ -650,6 +648,13 @@ func (server *Server) ProcessControl() {
 			}
 
 			server.Queue = nil
+		case *ServerEventAuth:
+			server.ProcessControlEvent(raw)
+			if client, ok := server.Clients[event.Id]; ok && client.Authed {
+				for _, old := range server.Queue {
+					server.ProcessControlEvent(old)
+				}
+			}
 		default:
 			server.ProcessControlEvent(raw)
 		}
