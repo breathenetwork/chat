@@ -124,6 +124,7 @@ type Client struct {
 	Send       SendFunc
 	Type       api.AuthType
 	Data       []byte
+	Authed     bool
 }
 
 type Server struct {
@@ -521,10 +522,10 @@ func (server *Server) ProcessControlEvent(raw ServerEvent) {
 			logger.Info("disc", event.Id)
 		}
 	case *ServerEventData:
-		if server.Breathe == nil {
+		client, ok := server.Clients[event.Id]
+		if server.Breathe == nil || (ok && !client.Authed) {
 			server.Queue = append(server.Queue, event)
 		} else {
-			client, ok := server.Clients[event.Id]
 			if ok {
 				if resp, err := server.Breathe.ClientData(context.Background(), &api.ClientDataEvent{
 					Id:   event.Id,
@@ -555,6 +556,7 @@ func (server *Server) ProcessControlEvent(raw ServerEvent) {
 				} else if resp.Status != api.Status_PERMIT {
 					event.Reply <- false
 				} else {
+					client.Authed = true
 					event.Reply <- true
 				}
 			}
