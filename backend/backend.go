@@ -471,7 +471,7 @@ func (server *Server) Process(client *Client, data []byte) bool {
 				}
 			}
 		}
-		if len(bod) > 0 {
+		if len(strings.TrimSpace(bod)) > 0 {
 			message := &Message{
 				Sender:   client.Settings,
 				SenderId: client.Settings.Id,
