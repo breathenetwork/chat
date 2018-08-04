@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "github.com/breathenetwork/chat/api";
+
+message ClientConnectedEvent {
+    string id = 1;
+    string ip = 2;
+    uint32 port = 3;
+}
+
+message ConnectedClient {
+    string id = 1;
+    string ip = 2;
+    uint32 port = 3;
+    AuthType auth_type = 4;
+    bytes auth_data = 5;
+}
+
+message ClientDisconnectedEvent {
+    string id = 1;
+}
+
+message ClientDataEvent {
+    string id = 1;
+    bytes data = 2;
+}
+
+enum AuthType {
+    UNKNOWN_AUTH_TYPE = 0;
+    IDENTITY_AUTH_TYPE = 1;
+    PASSWORD_AUTH_TYPE = 2;
+    PUBKEY_AUTH_TYPE = 3;
+}
+
+message ClientAuthEvent {
+    string id = 1;
+    AuthType type = 2;
+    bytes data = 3;
+}
+
+enum Status {
+    UNKNOWN_STATUS = 0;
+    PERMIT = 1;
+    DENY = 2;
+}
+
+message Response {
+    Status status = 1;
+    string description = 2;
+}
+
+message BootstrapEvent {
+    repeated ConnectedClient clients = 1;
+}
+
+message CommandStreamRequest {
+}
+
+enum CommandType {
+    UNKNOWN_COMMAND_TYPE = 0;
+    DISCONNECT_USER = 1;
+    SEND_USER = 2;
+}
+
+message DisconnectUserCommand {
+    string id = 1;
+}
+
+message SendUserCommand {
+    string id = 1;
+    bytes data = 2;
+}
+message BroadcastCommand {
+    bytes data = 1;
+}
+
+message Command {
+    CommandType type = 1;
+    oneof data {
+        DisconnectUserCommand disconnect_user = 16;
+        SendUserCommand send_user = 17;
+        BroadcastCommand broadcast = 18;
+    }
+}
+
+message ClientBannerRequest {
+}
+
+message ClientBannerResponse {
+    string banner = 1;
+}
+
+service BreatheServer {
+    rpc CommandStream(CommandStreamRequest) returns (stream Command);
+    rpc Bootstrap(BootstrapEvent) returns (Response);
+    rpc ClientConnected(ClientConnectedEvent) returns (Response);
+    rpc ClientDisconnect(ClientDisconnectedEvent) returns (Response);
+    rpc ClientData(ClientDataEvent) returns (Response);
+    rpc ClientAuth(ClientAuthEvent) returns (Response);
+    rpc ClientBanner(ClientBannerRequest) returns (ClientBannerResponse);
+}
