@@ -39,6 +39,7 @@ func init() {
 		"/historysearch": {Handler: HistorysearchHandler, Args: "<t*rm> [limit] [offset]", Description: "history log for day"},
 		"/memorise":      {Handler: MemoriseHandler, Args: "<user> <text>", Description: "send a memo to user"},
 		"/memo":          {Handler: MemoHandler, Args: "[id] [delete]", Description: "read a memo"},
+		"/list":          {Handler: ListHandler, Args: "", Description: "lists users"},
 	}
 }
 
@@ -1044,4 +1045,26 @@ func MemoHandler(server *Server, client *Client, message *Message, args []string
 			Transient: true,
 		})
 	}
+}
+
+func ListHandler(server *Server, client *Client, message *Message, args []string) {
+	buf := &bytes.Buffer{}
+	for _, c := range server.Clients {
+		if buf.Len() > 0 {
+			buf.WriteString("\n")
+		}
+		buf.WriteString("    ")
+		if c.Settings.Id > 0 {
+			buf.WriteString(c.Settings.Name)
+		} else {
+			buf.WriteString(DefaultName)
+			buf.WriteString(" " + c.Id)
+		}
+	}
+	server.Send(client, &Message{
+		Sender:    server.ServerUser.Settings,
+		Body:      "currently online:\n" + buf.String(),
+		Time:      time.Now(),
+		Transient: true,
+	})
 }
