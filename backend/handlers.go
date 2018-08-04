@@ -220,8 +220,11 @@ func RegisterHandler(server *Server, client *Client, message *Message, args []st
 					if len(args) > 3 {
 						entity.Email = strings.TrimSpace(args[3])
 					}
+
 					if len(args) > 4 {
 						entity.EmailPublic = strings.ToLower(strings.ToLower(args[4])) == "true"
+					} else {
+						entity.EmailPublic = true
 					}
 					if err := server.DB.Insert(entity); err != nil {
 						logger.Error(err)
