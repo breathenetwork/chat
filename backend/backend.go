@@ -347,7 +347,7 @@ func (server *Server) RenderMessage(client *Client, message *Message) []byte {
 			}
 			buf.WriteString(">>" + num + " ")
 		}
-		if message.SenderId == server.ServerUser.Settings.Id {
+		if message.Sender.Name == "SERVER" {
 			buf.WriteString("**SERVER** ")
 		} else {
 			if message.Action {
