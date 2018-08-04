@@ -36,7 +36,7 @@ func init() {
 		"/endlines":      {Handler: EndlinesHandler, Args: "<win|nix>", Description: "sets newlines"},
 		"/history":       {Handler: HistoryHandler, Args: "<limit> [offset]", Description: "history log"},
 		"/historyday":    {Handler: HistorydayHandler, Args: "<2006-12-31> [limit] [offset]", Description: "history log for day"},
-		"/historysearch": {Handler: HistorysearchHandler, Args: "<t*rm> [limit] [offset]", Description: "history log for day"},
+		"/historysearch": {Handler: HistorysearchHandler, Args: "<t*rm> [limit] [offset]", Description: "history search by term"},
 		"/memorise":      {Handler: MemoriseHandler, Args: "<user> <text>", Description: "send a memo to user"},
 		"/memo":          {Handler: MemoHandler, Args: "[id] [delete]", Description: "read a memo"},
 		"/list":          {Handler: ListHandler, Args: "", Description: "lists users"},
