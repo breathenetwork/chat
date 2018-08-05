@@ -18,6 +18,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	unicode2 "unicode"
 )
 
 const (
@@ -357,7 +358,15 @@ func (server *Server) RenderMessage(client *Client, message *Message) []byte {
 			}
 		}
 	}
-	buf.WriteString(message.Body)
+	filtered := make([]rune, 0)
+	for _, c := range message.Body {
+		if !unicode2.IsControl(c) || c == '\n' {
+			filtered = append(filtered, c)
+		}
+	}
+
+	buf.WriteString(string(filtered))
+
 	str := strings.Replace(buf.String()+"\n", "\n", client.Settings.Endlines, -1)
 	raw := []byte(str)
 
@@ -471,6 +480,7 @@ func (server *Server) Process(client *Client, data []byte) bool {
 				}
 			}
 		}
+
 		if len(strings.TrimSpace(bod)) > 0 {
 			message := &Message{
 				Sender:   client.Settings,
